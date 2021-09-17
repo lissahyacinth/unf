@@ -8,6 +8,9 @@ authors = [
 ]
 repository = "https://github.com/lissahyacinth/unf"
 description = "Calculate the Unique Numeric Fingerprint for Tabular Data"
+exclude = [
+    "data/*",
+]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -19,9 +22,6 @@ path = "src/lib.rs"
 name = "unf-rs"
 path = "src/main.rs"
 
-exclude = [
-    "data/*",
-]
 
 [dependencies]
 sha2 = "0.9.8"
