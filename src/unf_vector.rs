@@ -1,5 +1,4 @@
 use arrow::array::{Array, Float32Array, Float64Array, StringArray};
-use num_traits;
 use std::{
     convert::TryFrom,
     fmt::{self},
