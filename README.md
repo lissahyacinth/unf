@@ -2,7 +2,7 @@
 
 The Universal Numeric Fingerprint (UNF) is a language independent way of identifying a data object.
 
-More information on the creation of the UDF can be found [here](https://guides.dataverse.org/en/latest/developers/unf/index.html)
+More information on the creation of the UNF can be found [here](https://guides.dataverse.org/en/latest/developers/unf/index.html)
 
 ### Support
 | UNF Version      | Supported |
