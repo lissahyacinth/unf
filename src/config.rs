@@ -1,5 +1,5 @@
 #[derive(Clone, Copy)]
-pub(crate) struct UnfConfigBuilder {
+pub struct UnfConfigBuilder {
     digits: Option<u32>,
     characters: Option<usize>,
     truncation: Option<usize>,
@@ -11,8 +11,14 @@ pub enum UnfVersion {
     Six,
 }
 
+impl Default for UnfConfigBuilder {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl UnfConfigBuilder {
-    pub(crate) fn new() -> Self {
+    pub fn new() -> Self {
         UnfConfigBuilder {
             digits: None,
             characters: None,
@@ -21,27 +27,27 @@ impl UnfConfigBuilder {
         }
     }
 
-    pub(crate) fn digits(&mut self, x: u32) -> &mut UnfConfigBuilder {
+    pub fn digits(&mut self, x: u32) -> &mut UnfConfigBuilder {
         self.digits = Some(x);
         self
     }
 
-    pub(crate) fn characters(&mut self, x: usize) -> &mut UnfConfigBuilder {
+    pub fn characters(&mut self, x: usize) -> &mut UnfConfigBuilder {
         self.characters = Some(x);
         self
     }
 
-    pub(crate) fn truncation(&mut self, x: usize) -> &mut UnfConfigBuilder {
+    pub fn truncation(&mut self, x: usize) -> &mut UnfConfigBuilder {
         self.truncation = Some(x);
         self
     }
 
-    pub(crate) fn version(&mut self, x: UnfVersion) -> &mut UnfConfigBuilder {
+    pub fn version(&mut self, x: UnfVersion) -> &mut UnfConfigBuilder {
         self.version = Some(x);
         self
     }
 
-    pub(crate) fn build(&self) -> UnfConfig {
+    pub fn build(&self) -> UnfConfig {
         UnfConfig {
             digits: if let Some(digits) = self.digits {
                 digits

@@ -1,4 +1,7 @@
-use arrow::array::{Array, Float32Array, Float64Array, StringArray};
+use arrow::array::{
+    Array, Float32Array, Float64Array, Int16Array, Int32Array, Int64Array, StringArray,
+    UInt16Array, UInt32Array, UInt64Array,
+};
 use std::{
     convert::TryFrom,
     fmt::{self},
@@ -104,6 +107,36 @@ impl UNFVector for Float32Array {
     }
 }
 
+macro_rules! integer_unf {
+    ($array_type: ident) => {
+        impl UNFVector for $array_type {
+            fn to_unf(&self, _digits: u32) -> Vec<String> {
+                if self.null_count() == 0 {
+                    self.values().iter().map(exp_form).collect()
+                } else {
+                    let mut out: Vec<String> = Vec::with_capacity(self.len());
+                    for index in 0..self.len() {
+                        if self.is_null(index) {
+                            out.push("+nan".to_string())
+                        } else {
+                            out.push(exp_form(self.value(index)));
+                        }
+                    }
+                    out
+                }
+            }
+        }
+    };
+}
+
+integer_unf!(Int16Array);
+integer_unf!(Int32Array);
+integer_unf!(Int64Array);
+
+integer_unf!(UInt16Array);
+integer_unf!(UInt32Array);
+integer_unf!(UInt64Array);
+
 impl UNFVector for StringArray {
     fn to_unf(&self, _digits: u32) -> Vec<String> {
         let mut out: Vec<String> = Vec::with_capacity(self.len());
@@ -121,7 +154,7 @@ impl UNFVector for StringArray {
 mod tests {
     use std::sync::Arc;
 
-    use crate::{unf::unf_from_batch, unf_config::UnfConfigBuilder};
+    use crate::{config::UnfConfigBuilder, hash_builder::unf_from_batch};
 
     use super::*;
     use arrow::{

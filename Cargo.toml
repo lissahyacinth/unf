@@ -7,8 +7,18 @@ authors = [
     "Lissa Hyacinth <lissahyacinth@gmail.com>"
 ]
 repository = "https://github.com/lissahyacinth/unf"
+description = "Calculate the Unique Numeric Fingerprint for Tabular Data"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "unfhash"
+path = "src/lib.rs"
+
+[[bin]]
+name = "unf-rs"
+path = "src/main.rs"
+
 
 [dependencies]
 sha2 = "0.9.8"
