@@ -6,7 +6,8 @@ use crate::{
 };
 use arrow::{
     array::{
-        Float32Array, Float64Array, Int32Array, StringArray, UInt16Array, UInt32Array, UInt64Array,
+        Float32Array, Float64Array, Int32Array, Int64Array, StringArray, UInt16Array, UInt32Array,
+        UInt64Array,
     },
     datatypes::Schema,
     record_batch::RecordBatch,
@@ -140,7 +141,7 @@ pub(crate) fn unf_batch(
                 .expect("Failed to Downcast")
                 .raw(config.characters, config.digits),
             arrow::datatypes::DataType::Int64 => col
-                .downcast_ref::<Int32Array>()
+                .downcast_ref::<Int64Array>()
                 .expect("Failed to Downcast")
                 .raw(config.characters, config.digits),
             arrow::datatypes::DataType::UInt8 => col
