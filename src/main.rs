@@ -58,6 +58,6 @@ fn main() {
     let res = calculate_unf(unf_hash, csv.flatten(), config);
     println!(
         "File: {} | UNF Version: {:?} | ShortHash: {}",
-        file_path, config.version, res.short_hash
+        file_path, config.version, res
     );
 }
