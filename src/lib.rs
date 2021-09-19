@@ -18,7 +18,7 @@ pub fn calculate_unf<I>(
     mut unf_hash: UnfHashBuilder,
     batch_input: I,
     config: config::UnfConfig,
-) -> u32
+) -> u128
 where
     I: Iterator<Item = RecordBatch>,
 {
@@ -35,17 +35,20 @@ mod tests {
 
     use super::*;
 
-    fn read_return_hash(file_path: &str) -> u32 {
+    fn read_return_hash(file_path: &str) -> u128 {
         let config = UnfConfigBuilder::new().build();
         let csv = read_csv_data(file_path.to_string(), 100);
         let mut unf_hash = UnfHashBuilder::new(csv.schema(), config::UnfVersion::Six, config);
-        let mut batch_hashes: Vec<u32> = Vec::new();
+        let mut batch_hashes: Vec<u128> = Vec::new();
         for batch in csv {
             if let Ok(batch) = batch {
                 batch_hashes.push(unf_hash.hash(batch));
             }
         }
-        batch_hashes.into_iter().reduce(|acc, x| acc ^ x).unwrap()
+        batch_hashes
+            .into_iter()
+            .reduce(|acc, x| acc.wrapping_add(x))
+            .unwrap()
     }
 
     #[test]

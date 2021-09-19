@@ -1,6 +1,5 @@
+use fasthash::murmur3::hash128;
 use std::sync::Arc;
-
-use fasthash::murmur;
 
 use crate::{
     config::{UnfConfig, UnfVersion},
@@ -40,7 +39,7 @@ where
 #[derive(Debug)]
 pub struct UnfHash {
     pub short_hash: String,
-    pub hash: u32,
+    pub hash: u128,
     pub version: UnfVersion,
 }
 
@@ -69,7 +68,7 @@ impl UnfHashBuilder {
         }
     }
 
-    pub(crate) fn hash(&mut self, batch: RecordBatch) -> u32 {
+    pub(crate) fn hash(&mut self, batch: RecordBatch) -> u128 {
         unf_batch(batch, &self.schema, self.config)
     }
 }
@@ -167,11 +166,9 @@ fn convert_col_to_raw<'a>(
     }
 }
 
-/// Update MurmurHash for a given RecordBatch
+/// Produce MurmurHash for a given RecordBatch
 ///
-/// Suitable for UNF V4 and above, but not suitable for V3 which relies upon md5.
-/// Assumes that the ordering of the hashes matches the ordering of the schemas.
-pub(crate) fn unf_batch(input: RecordBatch, schema: &Arc<Schema>, config: UnfConfig) -> u32 {
+pub(crate) fn unf_batch(input: RecordBatch, schema: &Arc<Schema>, config: UnfConfig) -> u128 {
     HashIterator(
         input
             .columns()
@@ -180,7 +177,7 @@ pub(crate) fn unf_batch(input: RecordBatch, schema: &Arc<Schema>, config: UnfCon
             .map(|(col_index, col)| convert_col_to_raw(col.as_any(), col_index, schema, config))
             .collect(),
     )
-    .map(|row| murmur::hash32(row.into_iter().flatten().collect::<Vec<u8>>()))
-    .reduce(|acc, x| acc ^ x)
+    .map(|row| hash128(row.into_iter().flatten().collect::<Vec<u8>>()))
+    .reduce(|acc, x| acc.wrapping_add(x))
     .unwrap()
 }
