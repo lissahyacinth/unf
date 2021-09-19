@@ -35,9 +35,7 @@ mod tests {
 
     use super::*;
 
-    #[test]
-    fn load_float_from_file() {
-        let file_path = "data/ExampleData.csv";
+    fn read_return_hash(file_path: &str) -> u32 {
         let config = UnfConfigBuilder::new().build();
         let csv = read_csv_data(file_path.to_string(), 100);
         let mut unf_hash = UnfHashBuilder::new(csv.schema(), config::UnfVersion::Six, config);
@@ -47,6 +45,13 @@ mod tests {
                 batch_hashes.push(unf_hash.hash(batch));
             }
         }
-        dbg!(batch_hashes.into_iter().reduce(|acc, x| acc ^ x));
+        batch_hashes.into_iter().reduce(|acc, x| acc ^ x).unwrap()
+    }
+
+    #[test]
+    fn load_float_from_file() {
+        let file_path = "data/ExampleData.csv";
+        let file_path_2 = "data/ExampleDataSorted.csv";
+        assert_eq!(read_return_hash(file_path), read_return_hash(file_path_2))
     }
 }
